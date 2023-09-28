@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process>
+    <start code="start">
+        <parameter innerName="user_id" type="string"/>
+    </start>
+    <tasks>
+        <task description="Запрос данных" code="data_request" type="call_with_result">
+            <endpoint>${USER_REQUEST_SERVICE}/user/request</endpoint>
+            <input>
+                <parameter name="user_id" innerName="user_id" type="string"/>
+            </input>
+            <output>
+                <parameter name="condition"  innerName="condition" type="boolean"/>
+                <parameter name="test_value" innerName="test_value" type="numeric"/>
+            </output>
+        </task>
+        <task description="Проверка данных" code="check" type="gate"/>
+        <task description="Отправка" code="sending" type="call">
+            <endpoint>${CALL_GATE_SERVICE}/call</endpoint>
+            <input>
+                <parameter name="user_id" innerName="user_id" type="string"/>
+            </input>
+        </task>
+    </tasks>
+    <links>
+        <link code="start_data_request_link">
+            <from>start</from>
+            <to>data_request</to>
+        </link>
+        <link code="data_request_check_link">
+            <from>data_request</from>
+            <to>check</to>
+        </link>
+        <link code="check_default_result_link">
+            <from>check</from>
+            <to>default_result</to>
+            <condition type="default" />
+        </link>
+        <link code="check_sending_link">
+            <from>check</from>
+            <to>sending</to>
+            <condition type="expression">${condition && test_value == 0}</condition>
+        </link>
+        <link code="sending_extended_result_link">
+            <from>sending</from>
+            <to>extended_result</to>
+        </link>
+    </links>
+    <finishes>
+        <finish code="default_result" />
+        <finish code="extended_result" />
+    </finishes>
+</process>

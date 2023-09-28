@@ -1,0 +1,20 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: custom-bpm
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/bpm
+    username: bpm
+    password: bpm
+  jpa:
+    hibernate:
+      ddlAuto: none
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+    showSql: true
+  liquibase:
+    changeLog: classpath:db/changelog/changelog-root.xml
+    enabled: true
+
+schemeVolume: ${BPM_SCHEME_VOLUME:schemes}

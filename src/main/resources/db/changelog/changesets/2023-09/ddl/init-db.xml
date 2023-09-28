@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:pro="http://www.liquibase.org/xml/ns/pro" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
+      http://www.liquibase.org/xml/ns/pro
+      http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd">
+
+    <changeSet id="init-db" author="Mikheev Kirill">
+
+        <createTable tableName="process">
+            <column name="id" type="uuid" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="process_pk"/>
+            </column>
+            <column name="type" type="varchar(1024)" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(64)" >
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="process_variable">
+            <column name="process_id" type="uuid" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(256)" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar(64)" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="varchar(1024)" >
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
