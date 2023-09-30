@@ -3,6 +3,7 @@ package ru.mikheev.kirill.custombpm.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.mikheev.kirill.custombpm.scheme.SchemeStorage;
 import ru.mikheev.kirill.custombpm.service.ConfigFileOperations;
 
 import java.io.File;
@@ -14,19 +15,22 @@ import java.io.InputStream;
 @Service
 public class ConfigFileService implements ConfigFileOperations {
 
+    private final SchemeStorage schemeStorage;
     private final String schemeVolume;
 
-    public ConfigFileService(@Value("${schemeVolume}") String schemeVolume) {
+    public ConfigFileService(SchemeStorage schemeStorage, @Value("${schemeVolume}") String schemeVolume) {
+        this.schemeStorage = schemeStorage;
         this.schemeVolume = schemeVolume;
-        File file = new File(schemeVolume);
-        file.mkdir();
     }
 
-    public void uploadNewScheme(String fileName, InputStream inputStream) throws IOException {
-        File file = new File(schemeVolume, fileName);
-        System.out.println(file.createNewFile());
-        try (FileOutputStream fileOutputStream = new FileOutputStream(file)){
+    public void uploadNewScheme(String schemeFileName, InputStream inputStream) throws IOException {
+        File schemeFile = new File(schemeVolume, schemeFileName);
+        if(!schemeFile.createNewFile()) {
+            throw new RuntimeException("Cannot create file " + schemeFileName);
+        }
+        try (FileOutputStream fileOutputStream = new FileOutputStream(schemeFile)){
             inputStream.transferTo(fileOutputStream);
         }
+        schemeStorage.addNewScheme(schemeFile);
     }
 }

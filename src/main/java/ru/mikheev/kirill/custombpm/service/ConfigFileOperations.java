@@ -5,5 +5,5 @@ import java.io.InputStream;
 
 public interface ConfigFileOperations {
 
-    void uploadNewScheme(String fileName, InputStream inputStream) throws IOException;
+    void uploadNewScheme(String schemeFileName, InputStream inputStream) throws IOException;
 }

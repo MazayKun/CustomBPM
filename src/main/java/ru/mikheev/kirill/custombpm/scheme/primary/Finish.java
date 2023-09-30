@@ -1,4 +1,4 @@
-package ru.mikheev.kirill.custombpm.scheme;
+package ru.mikheev.kirill.custombpm.scheme.primary;
 
 import lombok.Getter;
 import lombok.Setter;

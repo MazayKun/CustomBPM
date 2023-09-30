@@ -1,12 +1,10 @@
-package ru.mikheev.kirill.custombpm.scheme;
+package ru.mikheev.kirill.custombpm.scheme.primary;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.List;
 
-@Setter
-@Getter
+@Data
 public class SchemeRawRepresentation {
     private Start start;
     private List<Task> tasks;

@@ -32,6 +32,8 @@ dependencies {
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.2'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	implementation 'org.hibernate.validator:hibernate-validator:6.0.10.Final'
 }
 
 tasks.named('test') {

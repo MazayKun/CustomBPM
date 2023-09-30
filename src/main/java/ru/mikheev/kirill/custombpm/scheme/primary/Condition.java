@@ -1,5 +1,6 @@
-package ru.mikheev.kirill.custombpm.scheme;
+package ru.mikheev.kirill.custombpm.scheme.primary;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,5 +8,6 @@ import lombok.Setter;
 @Getter
 public class Condition {
     private String type;
+    @JacksonXmlText
     private String conditionExpression;
 }
