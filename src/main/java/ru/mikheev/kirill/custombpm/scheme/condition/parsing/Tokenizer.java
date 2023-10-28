@@ -11,29 +11,30 @@ public class Tokenizer {
     private final StringBuilder tokenBuilder = new StringBuilder();
 
     private final StringScanner stringScanner;
-    private Token tokenBuffer = null; // Буффер для уже считанного, но не возвращенного токена
+    private Token tokenBuffer = null;
 
     public Tokenizer(String stringToTokenize) {
         this.stringScanner = new StringScanner(stringToTokenize);
     }
 
     public boolean hasNext() {
-        if(nonNull(tokenBuffer)) return true;
+        if (nonNull(tokenBuffer)) return true;
         clearSpaces();
         return stringScanner.hasNext();
     }
 
     public Token next() {
-        if(isNull(tokenBuffer)) return fetchToken();
-        var result = tokenBuffer;
+        if (isNull(tokenBuffer)) return fetchToken();
+        Token result = tokenBuffer;
         tokenBuffer = null;
         return result;
     }
 
     public Token peekToken() {
-        if(nonNull(tokenBuffer)) return tokenBuffer;
-        tokenBuffer = fetchToken();
-        return tokenBuffer;
+        if (nonNull(tokenBuffer)) return tokenBuffer;
+        Token newToken = fetchToken();
+        tokenBuffer = newToken;
+        return newToken;
     }
 
     public String getTokenRepresentation(Token token) {
@@ -54,11 +55,12 @@ public class Tokenizer {
         if (!stringScanner.hasNext()) throw new RuntimeException("В строке кончились токены");
         char nextChar = stringScanner.next();
         return switch (nextChar) {
-            case '(' -> fetchTokenStartedWithOpenBracket();
+            case '(' -> fetchOpenBracket();
             case ')' -> fetchCloseBracket();
             case '&', '|' -> fetchSimpleLogicalToken(nextChar);
             case '!' -> fetchTokenStartingWithExclamationMark();
             case '>', '<', '=' -> fetchInequalityOperation();
+            case ',' -> fetchComma();
             default -> fetchLatinCharsToken(nextChar);
         };
     }
@@ -72,11 +74,14 @@ public class Tokenizer {
         tokenBuilder.append(firstChar);
 
         char nextChar;
-        while (stringScanner.hasNext() && (nextChar = stringScanner.next()) != ' ') tokenBuilder.append(nextChar);
+        while (stringScanner.hasNext() && (nextChar = stringScanner.peekNext()) != ' ') {
+            tokenBuilder.append(nextChar);
+            stringScanner.next();
+        }
 
         String resultString = tokenBuilder.toString();
         if("TRUE".equalsIgnoreCase(resultString) || "FALSE".equalsIgnoreCase(resultString)) {
-            return new Token(Token.Type.CONSTANT, startIndex, stringScanner.getPointer());
+            return new Token(Token.Type.CONSTANT , startIndex, stringScanner.getPointer());
         }
         if ("IN".equalsIgnoreCase(resultString)) {
             return new Token(Token.Type.INEQUALITY_OPERATION, startIndex, stringScanner.getPointer());
@@ -93,67 +98,26 @@ public class Tokenizer {
         return new Token(Token.Type.PARAMETER, startIndex, stringScanner.getPointer());
     }
 
-    private Token fetchTokenStartedWithOpenBracket() {
-        int bracketPosition = stringScanner.getPointer() - 1;
-        clearSpaces();
-        if (!stringScanner.hasNext()) return fetchOpenBracket(bracketPosition);
-        char nextChar = stringScanner.peekNext();
-        if (nextChar == '\'' || (nextChar >= '0' && nextChar <= '9')) {
-            Token probableToken = fetchConstant( stringScanner.next());
-            clearSpaces();
-            nextChar = stringScanner.peekNext();
-            if(nextChar == ',' || nextChar == ')') {
-                return fetchConstantArray(bracketPosition);
-            }
-            if(tokenBuffer != null) throw new RuntimeException("Буффер не был очищен перед заполненеим");
-            tokenBuffer = probableToken;
-        }
-        return fetchOpenBracket(bracketPosition);
-    }
-
-    private Token fetchConstantArray(int bracketPosition) {
-        int startIndex = bracketPosition + 1;
-        int apostropheCounter = 0;
-        boolean currConstantRequireApostrophe = false;
-        boolean closingBracketWasNotFound = true;
-        char nextChar;
-        while (stringScanner.hasNext() && closingBracketWasNotFound) {
-            nextChar = stringScanner.next();
-            switch (nextChar) {
-                case ')' : {
-                    closingBracketWasNotFound = false;
-                    break;
-                }
-                case '\'' : apostropheCounter++; currConstantRequireApostrophe = !currConstantRequireApostrophe; break;
-                case ' ' : break;
-                case ',' : {
-                    if(apostropheCounter % 2 == 1) throw validationError("Некорректное количество апострофов");
-                    break;
-                }
-                default : {
-                    if(currConstantRequireApostrophe && apostropheCounter % 2 == 0) throw validationError("Недопустимый символ при объявлении массива");
-                }
-            }
-        }
-        if(apostropheCounter % 2 == 1) throw validationError("Некорректное количество апострофов");
-        if(closingBracketWasNotFound) throw validationError("Не было найдено закрывающей скобки для массива");
-        return new Token(Token.Type.CONSTANT_ARRAY, startIndex, stringScanner.getPointer() - 1);
-    }
-
     private Token fetchConstant(char firstChar) {
-        int startIndex = stringScanner.getPointer() - 1;
+        int startIndex = stringScanner.getPointer();
         boolean closingApostropheRequired = firstChar == '\'';
+        if (!closingApostropheRequired) {
+            startIndex--;
+        }
         char nextChar;
+        int offset = 0;
         while (stringScanner.hasNext() && (nextChar = stringScanner.peekNext()) != ' ') {
-            if(nextChar == ',') break;
+            if (nextChar == ')') return new Token(Token.Type.CONSTANT, startIndex, stringScanner.getPointer());
+            if (nextChar == ',') break;
             stringScanner.next();
-            if(nextChar == '\'') {
+            if (nextChar == '\'') {
                 closingApostropheRequired = !closingApostropheRequired;
+                offset = 1;
                 break;
             }
         }
         if(closingApostropheRequired) throw validationError("Wrong apostrophe count in constant declaration");
-        return new Token(Token.Type.CONSTANT, startIndex, stringScanner.getPointer());
+        return new Token(Token.Type.CONSTANT, startIndex, stringScanner.getPointer() - offset);
     }
 
     private Token fetchInequalityOperation() {
@@ -167,12 +131,20 @@ public class Tokenizer {
         return new Token(Token.Type.UNARY_LOGICAL_OPERATION, stringScanner.getPointer() - 1, stringScanner.getPointer());
     }
 
+    private Token fetchOpenBracket() {
+        return new Token(Token.Type.OPEN_BRACKET, stringScanner.getPointer() - 1, stringScanner.getPointer());
+    }
+
     private Token fetchOpenBracket(int bracketPosition) {
         return new Token(Token.Type.OPEN_BRACKET, bracketPosition, bracketPosition + 1);
     }
 
     private Token fetchCloseBracket() {
         return new Token(Token.Type.CLOSE_BRACKET, stringScanner.getPointer() - 1, stringScanner.getPointer());
+    }
+
+    private Token fetchComma() {
+        return new Token(Token.Type.COMMA, stringScanner.getPointer() - 1, stringScanner.getPointer());
     }
 
     private Token fetchSimpleLogicalToken(char logicalTokenFirstChar) {

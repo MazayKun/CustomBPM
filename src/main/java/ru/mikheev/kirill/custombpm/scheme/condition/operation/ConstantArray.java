@@ -18,13 +18,18 @@ public class ConstantArray implements InequalityOperationMember {
         this.array = setStringRepresentationToArray(stringArrayRepresentation);
     }
 
+    public ConstantArray(DataType arrayValuesDataType, Object[] array) {
+        this.arrayValuesDataType = arrayValuesDataType;
+        this.array = array;
+    }
+
     @Override
-    public Object getValue(Map<String, Object> dataMap) {
+    public Object[] getValue(Map<String, Object> dataMap) {
         return array;
     }
 
     @Override
-    public DataType getType() {
+    public DataType getDataType() {
         return arrayValuesDataType;
     }
 
@@ -42,7 +47,7 @@ public class ConstantArray implements InequalityOperationMember {
         while (stringScanner.hasNext()) {
             next = stringScanner.next();
             if (next == ',' && apostropheCounter % 2 == 0) {
-                result.add(arrayValuesDataType.fromString(elementBuilder.toString()));
+                result.add(arrayValuesDataType.valueFromString(elementBuilder.toString()));
                 elementBuilder.setLength(0);
                 continue;
             }

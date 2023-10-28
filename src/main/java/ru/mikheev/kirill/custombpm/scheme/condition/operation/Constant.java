@@ -10,7 +10,7 @@ public class Constant implements InequalityOperationMember {
     private final Object value;
 
     public Constant(DataType dataType, String stringRepresentation) {
-        this.value = dataType.fromString(stringRepresentation);
+        this.value = dataType.valueFromString(stringRepresentation);
         this.dataType = dataType;
 
     }
@@ -21,7 +21,7 @@ public class Constant implements InequalityOperationMember {
     }
 
     @Override
-    public DataType getType() {
+    public DataType getDataType() {
         return dataType;
     }
 }

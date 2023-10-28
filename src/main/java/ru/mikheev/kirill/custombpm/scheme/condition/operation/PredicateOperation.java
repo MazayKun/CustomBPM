@@ -1,6 +1,5 @@
 package ru.mikheev.kirill.custombpm.scheme.condition.operation;
 
-import java.util.Locale;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -25,11 +24,11 @@ public interface PredicateOperation {
         INEQUALITY;
 
         public static Priority getPriorityByOperationName(String logicalOperationName) {
-            try {
-                return valueOf(logicalOperationName.toUpperCase(Locale.ROOT));
-            } catch (Exception e) {
-                throw new RuntimeException("Unsupported operation with name " + logicalOperationName, e);
-            }
+            return switch (logicalOperationName) {
+                case "&&" -> AND;
+                case "||" -> OR;
+                default -> throw new RuntimeException("Unsupported operation with name " + logicalOperationName);
+            };
         }
     }
 }

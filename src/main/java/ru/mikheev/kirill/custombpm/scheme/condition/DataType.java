@@ -1,6 +1,7 @@
 package ru.mikheev.kirill.custombpm.scheme.condition;
 
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -12,6 +13,14 @@ public enum DataType {
 
     private final BiFunction<Object, Object, Integer> comparator;
     private final Function<String, Object> fromStringConverter;
+
+    public static DataType fromTypeCode(String typeCode) {
+        try {
+            return valueOf(typeCode.toUpperCase(Locale.ROOT));
+        } catch (Exception e) {
+            throw new RuntimeException("Bad data type code '" + typeCode + '\'');
+        }
+    }
 
     DataType(BiFunction<Object, Object, Integer> comparator, Function<String, Object> fromStringConverter) {
         this.comparator = comparator;
@@ -27,7 +36,7 @@ public enum DataType {
         }
     }
 
-    public Object fromString(String stringValue) {
+    public Object valueFromString(String stringValue) {
         try {
             return fromStringConverter.apply(stringValue);
         } catch (Exception e) {

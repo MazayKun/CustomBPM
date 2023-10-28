@@ -2,20 +2,20 @@ package ru.mikheev.kirill.custombpm.scheme.condition.operation;
 
 import java.util.Map;
 
-public class And extends BinaryLogicalOperation {
+public class Or extends BinaryLogicalOperation {
 
-    public And(PredicateOperation leftOperand, PredicateOperation rightOperand) {
+    public Or(PredicateOperation leftOperand, PredicateOperation rightOperand) {
         super(leftOperand, rightOperand);
     }
 
     @Override
     protected String getStringRepresentation() {
-        return "AND";
+        return "Or";
     }
 
     @Override
     public boolean getResultByData(Map<String, Object> dataMap) {
-        return leftOperand.getResultByData(dataMap) && rightOperand.getResultByData(dataMap);
+        return leftOperand.getResultByData(dataMap) || rightOperand.getResultByData(dataMap);
     }
 
     @Override

@@ -8,5 +8,5 @@ public interface InequalityOperationMember {
 
     Object getValue(Map<String, Object> dataMap);
 
-    DataType getType();
+    DataType getDataType();
 }

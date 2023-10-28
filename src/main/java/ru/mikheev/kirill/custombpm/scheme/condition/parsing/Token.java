@@ -22,11 +22,11 @@ public class Token {
     public enum Type {
         PARAMETER,
         CONSTANT,
-        CONSTANT_ARRAY,
         BINARY_LOGICAL_OPERATION,
         UNARY_LOGICAL_OPERATION,
         INEQUALITY_OPERATION,
         OPEN_BRACKET,
-        CLOSE_BRACKET
+        CLOSE_BRACKET,
+        COMMA
     }
 }
