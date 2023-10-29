@@ -1,6 +1,6 @@
 package ru.mikheev.kirill.custombpm.scheme.condition.operation;
 
-import ru.mikheev.kirill.custombpm.scheme.condition.DataType;
+import ru.mikheev.kirill.custombpm.common.DataType;
 import ru.mikheev.kirill.custombpm.scheme.condition.parsing.StringScanner;
 
 import java.util.ArrayList;

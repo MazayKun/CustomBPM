@@ -1,4 +1,4 @@
-package ru.mikheev.kirill.custombpm.scheme.condition;
+package ru.mikheev.kirill.custombpm.common;
 
 import java.time.LocalDate;
 import java.util.Locale;
@@ -6,17 +6,26 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public enum DataType {
-    DATE(DataType::compareLocalDate, DataType::toLocalDate),
-    NUMERIC(DataType::compareNumeric, DataType::toNumeric),
-    STRING(DataType::compareString, DataType::toString),
-    BOOLEAN(DataType::compareBoolean, DataType::toBoolean);
+    DATE(DataType::compareLocalDate, DataType::toLocalDate, LocalDate.class),
+    NUMERIC(DataType::compareNumeric, DataType::toNumeric, Long.class),
+    STRING(DataType::compareString, DataType::toString, String.class),
+    BOOLEAN(DataType::compareBoolean, DataType::toBoolean, Boolean.class);
 
     private final BiFunction<Object, Object, Integer> comparator;
     private final Function<String, Object> fromStringConverter;
+    private final Class<?> typeClass;
 
-    DataType(BiFunction<Object, Object, Integer> comparator, Function<String, Object> fromStringConverter) {
+    DataType(
+            BiFunction<Object, Object, Integer> comparator,
+            Function<String, Object> fromStringConverter,
+            Class<?> typeClass) {
         this.comparator = comparator;
         this.fromStringConverter = fromStringConverter;
+        this.typeClass = typeClass;
+    }
+
+    public Class<?> getTypeClass() {
+        return typeClass;
     }
 
     public static DataType fromTypeCode(String typeCode) {

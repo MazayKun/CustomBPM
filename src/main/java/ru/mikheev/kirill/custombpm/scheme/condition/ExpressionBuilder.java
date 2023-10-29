@@ -1,6 +1,7 @@
 package ru.mikheev.kirill.custombpm.scheme.condition;
 
 import org.springframework.cglib.core.internal.Function;
+import ru.mikheev.kirill.custombpm.common.DataType;
 import ru.mikheev.kirill.custombpm.scheme.condition.operation.*;
 import ru.mikheev.kirill.custombpm.scheme.condition.parsing.Token;
 import ru.mikheev.kirill.custombpm.scheme.condition.parsing.Tokenizer;

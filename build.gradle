@@ -28,14 +28,15 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     implementation 'org.liquibase:liquibase-core'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.2'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.15.2'
 
-
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    implementation 'org.hibernate.validator:hibernate-validator:6.0.10.Final'
+    implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
 }
 
 tasks.named('test') {
