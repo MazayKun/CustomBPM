@@ -26,18 +26,18 @@ public class SchemeStorage {
     @PostConstruct
     private void initUploadedSchemes() {
         File schemesDir = new File(schemesVolume);
-        if(!schemesDir.isDirectory()) {
+        if (!schemesDir.isDirectory()) {
             throw new RuntimeException(schemesVolume + " must be a directory");
         }
-        if(schemesDir.exists()) {
-            for(var schemeFile : schemesDir.listFiles()) {
+        if (schemesDir.exists()) {
+            for (var schemeFile : schemesDir.listFiles()) {
                 schemes.put(
                         constructSchemeName(schemeFile.getName()),
                         schemeParser.parseScheme(schemeFile)
                 );
             }
-        }else{
-            if(!schemesDir.mkdir()) {
+        } else {
+            if (!schemesDir.mkdir()) {
                 throw new RuntimeException("Cannot create schemes directory");
             }
         }
@@ -46,7 +46,7 @@ public class SchemeStorage {
 
     public Scheme getSchemeByName(String schemeName) {
         Scheme scheme = schemes.get(schemeName);
-        if(isNull(scheme)) {
+        if (isNull(scheme)) {
             throw new RuntimeException("Scheme not found");
         }
         return scheme;

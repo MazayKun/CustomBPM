@@ -23,7 +23,7 @@ public class TaskLink {
     }
 
     public static TaskLink conditionLink(TaskStage to, LogicalExpression logicalExpression) {
-        var taskLink =  new TaskLink(to, TransitionType.EXPRESSION);
+        var taskLink = new TaskLink(to, TransitionType.EXPRESSION);
         taskLink.logicalExpression = logicalExpression;
         return taskLink;
     }

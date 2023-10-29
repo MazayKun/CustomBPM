@@ -10,7 +10,7 @@
                 <parameter name="user_id" innerName="user_id" type="string"/>
             </input>
             <output>
-                <parameter name="condition"  innerName="condition" type="boolean"/>
+                <parameter name="condition" innerName="condition" type="boolean"/>
                 <parameter name="test_value" innerName="test_value" type="numeric"/>
             </output>
         </task>
@@ -34,7 +34,7 @@
         <link code="check_default_result_link">
             <from>check</from>
             <to>default_result</to>
-            <condition type="default" />
+            <condition type="default"/>
         </link>
         <link code="check_sending_link">
             <from>check</from>
@@ -47,7 +47,7 @@
         </link>
     </links>
     <finishes>
-        <finish code="default_result" />
-        <finish code="extended_result" />
+        <finish code="default_result"/>
+        <finish code="extended_result"/>
     </finishes>
 </process>

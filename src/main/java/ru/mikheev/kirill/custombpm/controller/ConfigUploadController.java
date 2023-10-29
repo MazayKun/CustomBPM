@@ -28,7 +28,7 @@ public class ConfigUploadController {
     @PostMapping("/upload-scheme")
     public void uploadNewScheme(@Valid @NotNull @RequestParam("file") MultipartFile file) {
         requestValidator.validateSchemeExtension(file);
-        try(InputStream fileInputStream = file.getInputStream()) {
+        try (InputStream fileInputStream = file.getInputStream()) {
             configFileOperations.uploadNewScheme(file.getOriginalFilename(), fileInputStream);
         } catch (IOException e) {
             log.error("Error during uploading config file", e);

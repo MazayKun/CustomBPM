@@ -55,7 +55,7 @@ public class SchemeParser {
         Map<String, Task> tasks = rawScheme.getTasks().stream()
                 .collect(Collectors.toMap(Task::getCode, Function.identity())); // TODO Обработать правильно ошибку валидации
         Scheme resultScheme = new Scheme();
-        for(Finish finish : rawScheme.getFinishes()) {
+        for (Finish finish : rawScheme.getFinishes()) {
             FinishTask finishTask = taskFactory.newFinishTask(finish);
             resultScheme.addTask(finishTask);
         }
@@ -64,24 +64,25 @@ public class SchemeParser {
         tasksToEnrich.add(startTask);
         resultScheme.addStartTask(startTask);
         TaskStage currTask;
-        while(!tasksToEnrich.isEmpty()) {
+        while (!tasksToEnrich.isEmpty()) {
             currTask = tasksToEnrich.remove();
-            for(Link link : links.get(currTask.getCode())) {
+            for (Link link : links.get(currTask.getCode())) {
                 Optional<TaskStage> nextStageOpt = resultScheme.getTaskStageByCode(link.getTo());
                 TaskStage nextTask;
-                if(nextStageOpt.isPresent()) {
+                if (nextStageOpt.isPresent()) {
                     nextTask = nextStageOpt.get();
-                }else{
+                } else {
                     Task dataForNewTask = tasks.get(link.getTo());
-                    if(isNull(dataForNewTask)) throw new RuntimeException("Next task with code " + link.getTo() + " not found");
+                    if (isNull(dataForNewTask))
+                        throw new RuntimeException("Next task with code " + link.getTo() + " not found");
                     nextTask = taskFactory.newTask(dataForNewTask);
                     tasksToEnrich.add(nextTask);
                     resultScheme.addTask(nextTask);
                 }
                 TaskLink generalLink;
-                if(isNull(link.getCondition())) {
+                if (isNull(link.getCondition())) {
                     generalLink = TaskLink.guaranteedLink(nextTask);
-                }else{
+                } else {
                     generalLink = switch (link.getCondition().getType()) {
                         case "default" -> TaskLink.defaultLink(nextTask);
                         case "expression" -> TaskLink.conditionLink(

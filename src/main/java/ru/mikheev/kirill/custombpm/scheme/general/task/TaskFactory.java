@@ -14,7 +14,7 @@ public class TaskFactory {
 
     public StartTask newStartTask(Start start) {
         StartTask startTask = new StartTask(start.getCode());
-        for(StartParameter parameter : start.getStartParameters()) {
+        for (StartParameter parameter : start.getStartParameters()) {
             startTask.addInitParameter(
                     new InitParameter(
                             isEmpty(parameter.getName()) ? parameter.getInnerName() : parameter.getName(),
@@ -56,7 +56,8 @@ public class TaskFactory {
         }
 
         for (Parameter outputParameter : taskInfo.getOutputParameters()) {
-            if(nonNull(outputParameter.getDefaultValue())) throw new RuntimeException("No default value allowed for output parameter");
+            if (nonNull(outputParameter.getDefaultValue()))
+                throw new RuntimeException("No default value allowed for output parameter");
             callWithResultTask.addOutputParameter(new OutputParameter(
                     outputParameter.getName(),
                     outputParameter.getInnerName(),
@@ -76,7 +77,7 @@ public class TaskFactory {
                     inputParameter.getDefaultValue()
             ));
         }
-        if(nonNull(taskInfo.getOutputParameters()) && !taskInfo.getOutputParameters().isEmpty())
+        if (nonNull(taskInfo.getOutputParameters()) && !taskInfo.getOutputParameters().isEmpty())
             throw new RuntimeException("No output parameters allowed for call task");
         return callTask;
     }

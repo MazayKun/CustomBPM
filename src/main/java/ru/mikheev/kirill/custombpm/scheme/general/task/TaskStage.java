@@ -20,8 +20,9 @@ public abstract class TaskStage {
     }
 
     public void addLink(TaskLink outgoingLink) {
-        if(outgoingLink.getTransitionType() == TransitionType.DEFAULT) {
-            if(nonNull(this.defaultLink)) throw new RuntimeException("It must be only one default link for task with code " + code);
+        if (outgoingLink.getTransitionType() == TransitionType.DEFAULT) {
+            if (nonNull(this.defaultLink))
+                throw new RuntimeException("It must be only one default link for task with code " + code);
             this.defaultLink = outgoingLink;
             return;
         }

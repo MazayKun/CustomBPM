@@ -22,44 +22,24 @@ public class Inequality implements PredicateOperation {
         this.operationRepresentation = operationRepresentation;
     }
 
-    @Override
-    public boolean getResultByData(Map<String, Object> dataMap) {
-        return resultCalculator.calculate(leftOperand, rightOperand, dataMap);
-    }
-
-    @Override
-    public Priority getPriority() {
-        return Priority.INEQUALITY;
-    }
-
-    @Override
-    public BinaryLogicalOperation appendBinaryOperation(
-            Priority newOperationPriority,
-            BiFunction<PredicateOperation, PredicateOperation, BinaryLogicalOperation> newOperationConstructor,
-            PredicateOperation predicateOperation) {
-        return newOperationConstructor.apply(this, predicateOperation);
-    }
-
-    @Override
-    public void toStringTree(StringBuilder result, String spacing) {
-        result
-                .append('\n').append(spacing).append(SINGLE_SPACE).append(leftOperand)
-                .append('\n').append(spacing).append(operationRepresentation)
-                .append('\n').append(spacing).append(SINGLE_SPACE).append(rightOperand);
-    }
-
     public static Inequality createInequalityByType(
             String operation,
             InequalityOperationMember leftOperand,
             InequalityOperationMember rightOperand
     ) {
         switch (operation) {
-            case ">" : return new Inequality(leftOperand, rightOperand, Inequality::greaterThan, operation);
-            case "<" : return new Inequality(leftOperand, rightOperand, Inequality::lessThan, operation);
-            case "=", "==" : return new Inequality(leftOperand, rightOperand, Inequality::equal, operation);
-            case ">=" : return new Inequality(leftOperand, rightOperand, Inequality::greaterThanOrEqual, operation);
-            case "<=" : return new Inequality(leftOperand, rightOperand, Inequality::lessThanOrEqual, operation);
-            case "!=" : return new Inequality(leftOperand, rightOperand, Inequality::notEqual, operation);
+            case ">":
+                return new Inequality(leftOperand, rightOperand, Inequality::greaterThan, operation);
+            case "<":
+                return new Inequality(leftOperand, rightOperand, Inequality::lessThan, operation);
+            case "=", "==":
+                return new Inequality(leftOperand, rightOperand, Inequality::equal, operation);
+            case ">=":
+                return new Inequality(leftOperand, rightOperand, Inequality::greaterThanOrEqual, operation);
+            case "<=":
+                return new Inequality(leftOperand, rightOperand, Inequality::lessThanOrEqual, operation);
+            case "!=":
+                return new Inequality(leftOperand, rightOperand, Inequality::notEqual, operation);
             default: {
                 String operationInUpperCase = operation.toUpperCase(Locale.ROOT);
                 if ("IN".equals(operationInUpperCase)) {
@@ -67,19 +47,14 @@ public class Inequality implements PredicateOperation {
                 }
                 StringBuilder operationRepresentationBuilder = new StringBuilder();
                 for (char currChar : operationInUpperCase.toCharArray()) {
-                    if (currChar != ' ')  operationRepresentationBuilder.append(currChar);
+                    if (currChar != ' ') operationRepresentationBuilder.append(currChar);
                 }
-                if("NOTIN".equals(operationRepresentationBuilder.toString())) {
+                if ("NOTIN".equals(operationRepresentationBuilder.toString())) {
                     return new Inequality(leftOperand, rightOperand, Inequality::notIn, "NOT IN");
                 }
                 throw new RuntimeException("Неподдерживаемая операция");
             }
         }
-    }
-
-    @FunctionalInterface
-    private interface InequalityCalculator {
-        boolean calculate(InequalityOperationMember leftOperand, InequalityOperationMember rightOperand, Map<String, Object> dataMap);
     }
 
     private static int compare(
@@ -117,7 +92,7 @@ public class Inequality implements PredicateOperation {
     }
 
     private static boolean in(InequalityOperationMember leftOperand, InequalityOperationMember rightOperand, Map<String, Object> dataMap) {
-        if(rightOperand instanceof ConstantArray array) {
+        if (rightOperand instanceof ConstantArray array) {
             Object modelValue = leftOperand.getValue(dataMap);
             for (Object arrayElement : array.getValue(dataMap)) {
                 if (array.getDataType().compare(modelValue, arrayElement) == 0) {
@@ -131,6 +106,37 @@ public class Inequality implements PredicateOperation {
     }
 
     private static boolean notIn(InequalityOperationMember leftOperand, InequalityOperationMember rightOperand, Map<String, Object> dataMap) {
-        return ! in(leftOperand, rightOperand, dataMap);
+        return !in(leftOperand, rightOperand, dataMap);
+    }
+
+    @Override
+    public boolean getResultByData(Map<String, Object> dataMap) {
+        return resultCalculator.calculate(leftOperand, rightOperand, dataMap);
+    }
+
+    @Override
+    public Priority getPriority() {
+        return Priority.INEQUALITY;
+    }
+
+    @Override
+    public BinaryLogicalOperation appendBinaryOperation(
+            Priority newOperationPriority,
+            BiFunction<PredicateOperation, PredicateOperation, BinaryLogicalOperation> newOperationConstructor,
+            PredicateOperation predicateOperation) {
+        return newOperationConstructor.apply(this, predicateOperation);
+    }
+
+    @Override
+    public void toStringTree(StringBuilder result, String spacing) {
+        result
+                .append('\n').append(spacing).append(SINGLE_SPACE).append(leftOperand)
+                .append('\n').append(spacing).append(operationRepresentation)
+                .append('\n').append(spacing).append(SINGLE_SPACE).append(rightOperand);
+    }
+
+    @FunctionalInterface
+    private interface InequalityCalculator {
+        boolean calculate(InequalityOperationMember leftOperand, InequalityOperationMember rightOperand, Map<String, Object> dataMap);
     }
 }

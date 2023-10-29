@@ -34,7 +34,7 @@ public class StringScanner {
 
     @Override
     public String toString() {
-        if(pointer >= string.length()) {
+        if (pointer >= string.length()) {
             return "StringScanner{" +
                     "string='" + string + "{}'" +
                     ", pointer=" + pointer + '}';

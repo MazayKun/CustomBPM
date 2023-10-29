@@ -51,7 +51,7 @@ public class ConstantArray implements InequalityOperationMember {
                 elementBuilder.setLength(0);
                 continue;
             }
-            if(next == '\'') { // TODO : Добавить возможность экранировать ' в строковых литералах
+            if (next == '\'') { // TODO : Добавить возможность экранировать ' в строковых литералах
                 apostropheCounter++;
                 continue;
             }

@@ -10,7 +10,7 @@ public class Not extends UnaryLogicalOperation {
 
     @Override
     public boolean getResultByData(Map<String, Object> dataMap) {
-        return ! innerOperand.getResultByData(dataMap);
+        return !innerOperand.getResultByData(dataMap);
     }
 
     @Override

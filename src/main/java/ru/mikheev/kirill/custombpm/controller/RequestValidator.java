@@ -11,13 +11,13 @@ public class RequestValidator {
     private static final String SCHEME_EXTENSION = "xml";
 
     public void validateSchemeExtension(MultipartFile file) {
-        if(isEmpty(file.getOriginalFilename())) {
+        if (isEmpty(file.getOriginalFilename())) {
             throw new RuntimeException("Empty file name");
         }
         String fileExtension = file.getOriginalFilename().substring(
                 file.getOriginalFilename().lastIndexOf('.')
         );
-        if(!SCHEME_EXTENSION.equalsIgnoreCase(fileExtension)) {
+        if (!SCHEME_EXTENSION.equalsIgnoreCase(fileExtension)) {
             throw new RuntimeException("Bad extension for scheme file " + fileExtension);
         }
     }

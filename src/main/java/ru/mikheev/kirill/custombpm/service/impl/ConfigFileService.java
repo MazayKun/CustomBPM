@@ -25,10 +25,10 @@ public class ConfigFileService implements ConfigFileOperations {
 
     public void uploadNewScheme(String schemeFileName, InputStream inputStream) throws IOException {
         File schemeFile = new File(schemeVolume, schemeFileName);
-        if(!schemeFile.createNewFile()) {
+        if (!schemeFile.createNewFile()) {
             throw new RuntimeException("Cannot create file " + schemeFileName);
         }
-        try (FileOutputStream fileOutputStream = new FileOutputStream(schemeFile)){
+        try (FileOutputStream fileOutputStream = new FileOutputStream(schemeFile)) {
             inputStream.transferTo(fileOutputStream);
         }
         schemeStorage.addNewScheme(schemeFile);

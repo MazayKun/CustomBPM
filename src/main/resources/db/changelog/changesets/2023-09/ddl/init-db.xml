@@ -1,38 +1,112 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xmlns:pro="http://www.liquibase.org/xml/ns/pro" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
-      http://www.liquibase.org/xml/ns/pro
-      http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd">
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
 
-    <changeSet id="init-db" author="Mikheev Kirill">
+    <changeSet id="create_tables" author="Mikheev Kirill">
 
-        <createTable tableName="process">
-            <column name="id" type="uuid" >
+        <createTable tableName="processes">
+            <column name="id" type="uuid">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="process_pk"/>
             </column>
-            <column name="type" type="varchar(1024)" >
+            <column name="type" type="varchar(1024)">
                 <constraints nullable="false"/>
             </column>
-            <column name="status" type="varchar(64)" >
+            <column name="status" type="varchar(64)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
 
-        <createTable tableName="process_variable">
-            <column name="process_id" type="uuid" >
+        <createTable tableName="process_variables">
+            <column name="process_id" type="uuid">
                 <constraints nullable="false"/>
             </column>
-            <column name="name" type="varchar(256)" >
+            <column name="name" type="varchar(256)">
                 <constraints nullable="false"/>
             </column>
-            <column name="type" type="varchar(64)" >
+            <column name="type" type="varchar(64)">
                 <constraints nullable="false"/>
             </column>
-            <column name="value" type="varchar(1024)" >
+            <column name="value" type="varchar(1024)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <createTable tableName="execution_branches">
+            <column name="id" type="uuid">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="execution_branch_pk"/>
+            </column>
+            <column name="code" type="varchar(1024)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="process_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="current_block_code" type="varchar(1024)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="branch_exceptions">
+            <column name="branch_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="message" type="varchar(1024)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="stack_trace" type="clob">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create_indexes" author="Mikheev Kirill">
+        <createIndex indexName="process_variables_idx"
+                     tableName="process_variables"
+                     clustered="true"
+                     unique="true">
+            <column name="name"/>
+            <column name="process_id"/>
+        </createIndex>
+
+        <createIndex indexName="execution_branches_idx"
+                     tableName="execution_branches"
+                     unique="true">
+            <column name="code"/>
+            <column name="process_id"/>
+        </createIndex>
+
+        <createIndex indexName="branch_exceptions_idx"
+                     tableName="branch_exceptions"
+                     clustered="true"
+                     unique="true">
+            <column name="branch_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="create_foreign_keys" author="Mikheev Kirill">
+        <addForeignKeyConstraint baseColumnNames="process_id"
+                                 baseTableName="process_variables"
+                                 constraintName="process_variable_fk"
+                                 referencedColumnNames="id"
+                                 referencedTableName="processes"
+        />
+        <addForeignKeyConstraint baseColumnNames="process_id"
+                                 baseTableName="execution_branches"
+                                 constraintName="process_execution_branch_fk"
+                                 referencedColumnNames="id"
+                                 referencedTableName="processes"
+        />
+        <addForeignKeyConstraint baseColumnNames="branch_id"
+                                 baseTableName="branch_exceptions"
+                                 constraintName="branch_exception_fk"
+                                 referencedColumnNames="id"
+                                 referencedTableName="execution_branches"
+        />
     </changeSet>
 
 </databaseChangeLog>

@@ -22,7 +22,7 @@ public class ExpressionBuilder {
     private Token currentToken;
 
     public ExpressionBuilder(String expressionToParse, Set<TaskParameter> schemeParameters) {
-        if(isBlank(expressionToParse)) {
+        if (isBlank(expressionToParse)) {
             throw new RuntimeException("Expression string is empty");
         }
         this.parametersWithTypes = schemeParameters.stream()
@@ -111,12 +111,15 @@ public class ExpressionBuilder {
     private PredicateOperation fetchInequality() {
         Token leftOperandToken = currentToken;
 
-        if (!tokenizer.hasNext()) throw validationError("Не удалось построить неравенство, после первого параметра нет оператора");
+        if (!tokenizer.hasNext())
+            throw validationError("Не удалось построить неравенство, после первого параметра нет оператора");
 
         Token operationToken = tokenizer.next();
-        if (operationToken.getType() != Token.Type.INEQUALITY_OPERATION) throw validationError("Не удалсоь построить неравенство, после первого параметра идет неподходящий токен");
+        if (operationToken.getType() != Token.Type.INEQUALITY_OPERATION)
+            throw validationError("Не удалсоь построить неравенство, после первого параметра идет неподходящий токен");
 
-        if (!tokenizer.hasNext()) throw validationError("Не удалось построить неравенство, после оператора не последовало второго операнда");
+        if (!tokenizer.hasNext())
+            throw validationError("Не удалось построить неравенство, после оператора не последовало второго операнда");
 
         currentToken = tokenizer.next();
         Inequality constructedInequality;
@@ -129,7 +132,8 @@ public class ExpressionBuilder {
             InequalityOperationMember rightOperand = convertTokenToOperationMember(currentToken, parameterType);
             constructedInequality = Inequality.createInequalityByType(tokenizer.getTokenRepresentation(operationToken), leftOperand, rightOperand);
         } else {
-            if (currentToken.getType() != Token.Type.PARAMETER) throw validationError("В паре из двух операндов не хватает параметра, который бы позволил определить тип данных");
+            if (currentToken.getType() != Token.Type.PARAMETER)
+                throw validationError("В паре из двух операндов не хватает параметра, который бы позволил определить тип данных");
             String parameterName = tokenizer.getTokenRepresentation(currentToken);
             DataType parameterType = parametersWithTypes.get(parameterName);
             if (isNull(parameterType)) throw validationError("Не найден тип параметра в изначальной схеме");
@@ -158,10 +162,12 @@ public class ExpressionBuilder {
                 do {
                     if (!tokenizer.hasNext()) throw validationError("Неправильное построение массива констант");
                     lastToken = tokenizer.next();
-                    if (lastToken.getType() != Token.Type.CONSTANT) throw validationError("Неправильное построение массива констант");
+                    if (lastToken.getType() != Token.Type.CONSTANT)
+                        throw validationError("Неправильное построение массива констант");
                     arrayContent.add(dataType.valueFromString(tokenizer.getTokenRepresentation(lastToken)));
                 } while (tokenizer.hasNext() && (lastToken = tokenizer.next()).getType() == Token.Type.COMMA);
-                if (lastToken.getType() != Token.Type.CLOSE_BRACKET) throw validationError("Неправильное построение массива констант");
+                if (lastToken.getType() != Token.Type.CLOSE_BRACKET)
+                    throw validationError("Неправильное построение массива констант");
                 yield new ConstantArray(dataType, arrayContent.toArray());
             }
             default -> throw validationError("Неправильный токен для операнда");

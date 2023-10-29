@@ -14,6 +14,11 @@ public enum DataType {
     private final BiFunction<Object, Object, Integer> comparator;
     private final Function<String, Object> fromStringConverter;
 
+    DataType(BiFunction<Object, Object, Integer> comparator, Function<String, Object> fromStringConverter) {
+        this.comparator = comparator;
+        this.fromStringConverter = fromStringConverter;
+    }
+
     public static DataType fromTypeCode(String typeCode) {
         try {
             return valueOf(typeCode.toUpperCase(Locale.ROOT));
@@ -22,9 +27,36 @@ public enum DataType {
         }
     }
 
-    DataType(BiFunction<Object, Object, Integer> comparator, Function<String, Object> fromStringConverter) {
-        this.comparator = comparator;
-        this.fromStringConverter = fromStringConverter;
+    private static Integer compareLocalDate(Object leftOperand, Object rightOperand) {
+        return ((LocalDate) leftOperand).compareTo((LocalDate) rightOperand);
+    }
+
+    private static Integer compareNumeric(Object leftOperand, Object rightOperand) {
+        return ((Long) leftOperand).compareTo((Long) rightOperand);
+    }
+
+    private static Integer compareString(Object leftOperand, Object rightOperand) {
+        return ((String) leftOperand).compareTo((String) rightOperand);
+    }
+
+    private static Integer compareBoolean(Object leftOperand, Object rightOperand) {
+        return ((Boolean) leftOperand).compareTo((Boolean) rightOperand);
+    }
+
+    private static Object toLocalDate(String stringValue) {
+        return LocalDate.parse(stringValue);
+    }
+
+    private static Object toNumeric(String stringValue) {
+        return Long.valueOf(stringValue);
+    }
+
+    private static Object toString(String stringValue) {
+        return stringValue;
+    }
+
+    private static Object toBoolean(String stringValue) {
+        return Boolean.parseBoolean(stringValue);
     }
 
     public int compare(Object leftMember, Object rightMember) {
@@ -42,37 +74,5 @@ public enum DataType {
         } catch (Exception e) {
             throw new RuntimeException("Error during conversion String to type " + this.name() + '(' + stringValue + ')', e);
         }
-    }
-
-    private static Integer compareLocalDate(Object leftOperand, Object rightOperand) {
-        return ((LocalDate)leftOperand).compareTo((LocalDate)rightOperand);
-    }
-
-    private static Integer compareNumeric(Object leftOperand, Object rightOperand) {
-        return ((Long)leftOperand).compareTo((Long)rightOperand);
-    }
-
-    private static Integer compareString(Object leftOperand, Object rightOperand) {
-        return ((String)leftOperand).compareTo((String)rightOperand);
-    }
-
-    private static Integer compareBoolean(Object leftOperand, Object rightOperand) {
-        return ((Boolean)leftOperand).compareTo((Boolean)rightOperand);
-    }
-
-    private static Object toLocalDate(String stringValue) {
-        return LocalDate.parse(stringValue);
-    }
-
-    private static Object toNumeric(String stringValue) {
-        return Long.valueOf(stringValue);
-    }
-
-    private static Object toString(String stringValue) {
-        return stringValue;
-    }
-
-    private static Object toBoolean(String stringValue) {
-        return Boolean.parseBoolean(stringValue);
     }
 }

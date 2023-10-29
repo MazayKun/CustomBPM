@@ -47,7 +47,7 @@ public class Tokenizer {
     }
 
     private void clearSpaces() {
-        while(stringScanner.hasNext() && stringScanner.peekNext() == ' ') stringScanner.next();
+        while (stringScanner.hasNext() && stringScanner.peekNext() == ' ') stringScanner.next();
     }
 
     private Token fetchToken() {
@@ -80,8 +80,8 @@ public class Tokenizer {
         }
 
         String resultString = tokenBuilder.toString();
-        if("TRUE".equalsIgnoreCase(resultString) || "FALSE".equalsIgnoreCase(resultString)) {
-            return new Token(Token.Type.CONSTANT , startIndex, stringScanner.getPointer());
+        if ("TRUE".equalsIgnoreCase(resultString) || "FALSE".equalsIgnoreCase(resultString)) {
+            return new Token(Token.Type.CONSTANT, startIndex, stringScanner.getPointer());
         }
         if ("IN".equalsIgnoreCase(resultString)) {
             return new Token(Token.Type.INEQUALITY_OPERATION, startIndex, stringScanner.getPointer());
@@ -116,18 +116,18 @@ public class Tokenizer {
                 break;
             }
         }
-        if(closingApostropheRequired) throw validationError("Wrong apostrophe count in constant declaration");
+        if (closingApostropheRequired) throw validationError("Wrong apostrophe count in constant declaration");
         return new Token(Token.Type.CONSTANT, startIndex, stringScanner.getPointer() - offset);
     }
 
     private Token fetchInequalityOperation() {
         int startIndex = stringScanner.getPointer() - 1;
-        if(stringScanner.peekNext() == '=') stringScanner.next();
+        if (stringScanner.peekNext() == '=') stringScanner.next();
         return new Token(Token.Type.INEQUALITY_OPERATION, startIndex, stringScanner.getPointer());
     }
 
     private Token fetchTokenStartingWithExclamationMark() {
-        if(stringScanner.peekNext() == '=') return fetchInequalityOperation();
+        if (stringScanner.peekNext() == '=') return fetchInequalityOperation();
         return new Token(Token.Type.UNARY_LOGICAL_OPERATION, stringScanner.getPointer() - 1, stringScanner.getPointer());
     }
 
@@ -148,7 +148,8 @@ public class Tokenizer {
     }
 
     private Token fetchSimpleLogicalToken(char logicalTokenFirstChar) {
-        if (!stringScanner.hasNext() || stringScanner.next() != logicalTokenFirstChar) throw validationError("Cannot parse logical token");
+        if (!stringScanner.hasNext() || stringScanner.next() != logicalTokenFirstChar)
+            throw validationError("Cannot parse logical token");
         return new Token(Token.Type.BINARY_LOGICAL_OPERATION, stringScanner.getPointer() - 2, stringScanner.getPointer());
     }
 
