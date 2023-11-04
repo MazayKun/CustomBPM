@@ -1,9 +1,8 @@
 package ru.mikheev.kirill.custombpm.scheme.general.task;
 
-import ru.mikheev.kirill.custombpm.scheme.general.link.TaskLink;
 import ru.mikheev.kirill.custombpm.service.TaskExecutor;
 
-import java.util.List;
+import java.util.UUID;
 
 public class FinishTask extends TaskStage {
 
@@ -12,17 +11,7 @@ public class FinishTask extends TaskStage {
     }
 
     @Override
-    public void execute(TaskExecutor taskExecutor) {
-        taskExecutor.executeFinishTask(this);
-    }
-
-    @Override
-    public List<TaskLink> getOutgoingLinks() {
-        throw new UnsupportedOperationException("No outgoing links for finish task");
-    }
-
-    @Override
-    public TaskLink getDefaultLink() {
-        throw new UnsupportedOperationException("No outgoing links for finish task");
+    public void execute(UUID processId, String branchCode, TaskExecutor taskExecutor) {
+        taskExecutor.executeFinishTask(processId, branchCode, this);
     }
 }

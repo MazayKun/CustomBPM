@@ -17,4 +17,11 @@ public class Process {
     private ProcessStatus status;
 
     private String type;
+
+    public static Process newProcess(String type) {
+        Process result = new Process();
+        result.setStatus(ProcessStatus.IN_PROGRESS);
+        result.setType(type);
+        return result;
+    }
 }

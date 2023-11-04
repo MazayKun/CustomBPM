@@ -3,6 +3,7 @@ package ru.mikheev.kirill.custombpm.scheme.general;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import ru.mikheev.kirill.custombpm.common.DataType;
 
 @Setter
 @Getter
@@ -10,5 +11,5 @@ import lombok.Setter;
 public class OutputParameter {
     private String name;
     private String innerName;
-    private String type;
+    private DataType type;
 }

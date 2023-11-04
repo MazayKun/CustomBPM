@@ -1,10 +1,12 @@
 package ru.mikheev.kirill.custombpm.scheme.general.task;
 
 import ru.mikheev.kirill.custombpm.scheme.general.InitParameter;
+import ru.mikheev.kirill.custombpm.scheme.general.link.TaskLink;
 import ru.mikheev.kirill.custombpm.service.TaskExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class StartTask extends TaskStage {
 
@@ -22,8 +24,12 @@ public class StartTask extends TaskStage {
         return initParameters;
     }
 
+    public TaskLink getNextTaskLink() {
+        return nextTaskLink;
+    }
+
     @Override
-    public void execute(TaskExecutor taskExecutor) {
-        taskExecutor.startNewProcess(this);
+    public void execute(UUID processId, String branchCode, TaskExecutor taskExecutor) {
+        throw new UnsupportedOperationException("Start task has no instruction for execution");
     }
 }

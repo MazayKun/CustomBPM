@@ -1,24 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <process>
+    <parameterTypes>
+        <parameterType name="user_id" type="string"/>
+        <parameterType name="condition" type="boolean"/>
+        <parameterType name="test_value" type="numeric"/>
+    </parameterTypes>
     <start code="start">
-        <startParameter innerName="user_id" type="string"/>
+        <startParameter innerName="user_id"/>
     </start>
     <tasks>
         <task description="Запрос данных" code="data_request" type="call_with_result">
             <endpoint>${CALL_WITH_RESULT_SERVICE}/call</endpoint>
             <input>
-                <parameter name="user_id" innerName="user_id" type="string"/>
+                <parameter name="user_id" innerName="user_id"/>
             </input>
             <output>
-                <parameter name="condition" innerName="condition" type="boolean"/>
-                <parameter name="test_value" innerName="test_value" type="numeric"/>
+                <parameter name="condition" innerName="condition"/>
+                <parameter name="test_value" innerName="test_value"/>
             </output>
         </task>
-        <task description="Проверка данных" code="check" type="gate"/>
+        <task description="Проверка данных" code="check" type="singleton_gate"/>
         <task description="Отправка" code="sending" type="call">
             <endpoint>${CALL_SERVICE}/call</endpoint>
             <input>
-                <parameter name="user_id" innerName="user_id" type="string"/>
+                <parameter name="user_id" innerName="user_id"/>
             </input>
         </task>
     </tasks>

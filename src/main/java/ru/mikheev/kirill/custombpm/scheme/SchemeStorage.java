@@ -1,6 +1,7 @@
 package ru.mikheev.kirill.custombpm.scheme;
 
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.mikheev.kirill.custombpm.scheme.general.Scheme;
@@ -8,9 +9,9 @@ import ru.mikheev.kirill.custombpm.scheme.general.Scheme;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-import static java.util.Objects.isNull;
-
+@Slf4j
 @Service
 public class SchemeStorage {
 
@@ -30,10 +31,12 @@ public class SchemeStorage {
             throw new RuntimeException(schemesVolume + " must be a directory");
         }
         if (schemesDir.exists()) {
+            String schemeName;
             for (var schemeFile : schemesDir.listFiles()) {
+                schemeName = constructSchemeName(schemeFile.getName());
                 schemes.put(
-                        constructSchemeName(schemeFile.getName()),
-                        schemeParser.parseScheme(schemeFile)
+                        schemeName,
+                        schemeParser.parseScheme(schemeFile, schemeName)
                 );
             }
         } else {
@@ -41,19 +44,21 @@ public class SchemeStorage {
                 throw new RuntimeException("Cannot create schemes directory");
             }
         }
-        System.out.println("ready");
+        log.info("Old schemes initialized");
     }
 
-    public Scheme getSchemeByName(String schemeName) {
-        Scheme scheme = schemes.get(schemeName);
-        if (isNull(scheme)) {
-            throw new RuntimeException("Scheme not found");
-        }
-        return scheme;
+    public Optional<Scheme> getSchemeByName(String schemeName) {
+        return Optional.ofNullable(
+                schemes.get(schemeName)
+        );
     }
 
     public void addNewScheme(File schemeFile) {
-
+        String schemeName = constructSchemeName(schemeFile.getName());
+        schemes.put(
+                schemeName,
+                schemeParser.parseScheme(schemeFile, schemeName)
+        );
     }
 
     private String constructSchemeName(String fileName) {

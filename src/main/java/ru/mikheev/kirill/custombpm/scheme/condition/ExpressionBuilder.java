@@ -5,11 +5,9 @@ import ru.mikheev.kirill.custombpm.common.DataType;
 import ru.mikheev.kirill.custombpm.scheme.condition.operation.*;
 import ru.mikheev.kirill.custombpm.scheme.condition.parsing.Token;
 import ru.mikheev.kirill.custombpm.scheme.condition.parsing.Tokenizer;
-import ru.mikheev.kirill.custombpm.scheme.general.TaskParameter;
 
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -22,12 +20,11 @@ public class ExpressionBuilder {
 
     private Token currentToken;
 
-    public ExpressionBuilder(String expressionToParse, Set<TaskParameter> schemeParameters) {
+    public ExpressionBuilder(String expressionToParse,  Map<String, DataType> parametersWithTypes) {
         if (isBlank(expressionToParse)) {
             throw new RuntimeException("Expression string is empty");
         }
-        this.parametersWithTypes = schemeParameters.stream()
-                .collect(Collectors.toMap(TaskParameter::getInnerName, this::getParameterDataType));
+        this.parametersWithTypes = parametersWithTypes;
         this.tokenizer = new Tokenizer(expressionToParse);
     }
 
@@ -35,10 +32,6 @@ public class ExpressionBuilder {
         if (!tokenizer.hasNext()) throw new RuntimeException("Expression already created");
         PredicateOperation operationRepresentation = buildNewLevelOfExpression(false);
         return new ExpressionParsingResult(operationRepresentation, requiredParameters);
-    }
-
-    private DataType getParameterDataType(TaskParameter parameter) {
-        return DataType.fromTypeCode(parameter.getType());
     }
 
     //TODO : Добавить логические выражения, состоящие только из констант (true, 1 ...)

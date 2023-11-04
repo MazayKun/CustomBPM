@@ -12,7 +12,7 @@ public class Task {
     private String description;
     private String code;
     private String type;
-    private Endpoint endpoint; // TODO Переработать
+    private Endpoint endpoint; // TODO Вынести в отдельный конфиг
     @JacksonXmlElementWrapper(localName = "input")
     private List<Parameter> inputParameters;
     @JacksonXmlElementWrapper(localName = "output")

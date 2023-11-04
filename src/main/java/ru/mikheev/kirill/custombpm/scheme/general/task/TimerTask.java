@@ -2,6 +2,8 @@ package ru.mikheev.kirill.custombpm.scheme.general.task;
 
 import ru.mikheev.kirill.custombpm.service.TaskExecutor;
 
+import java.util.UUID;
+
 public class TimerTask extends TaskStage {
 
     private final long waitingTime;
@@ -12,7 +14,7 @@ public class TimerTask extends TaskStage {
     }
 
     @Override
-    public void execute(TaskExecutor taskExecutor) {
-        taskExecutor.executeTimerTask(this);
+    public void execute(UUID processId, String branchCode, TaskExecutor taskExecutor) {
+        taskExecutor.executeTimerTask(processId, branchCode, this);
     }
 }

@@ -1,25 +1,32 @@
 package ru.mikheev.kirill.custombpm.scheme.general.task;
 
 import org.springframework.stereotype.Service;
+import ru.mikheev.kirill.custombpm.common.DataType;
 import ru.mikheev.kirill.custombpm.scheme.general.InitParameter;
 import ru.mikheev.kirill.custombpm.scheme.general.InputParameter;
 import ru.mikheev.kirill.custombpm.scheme.general.OutputParameter;
 import ru.mikheev.kirill.custombpm.scheme.primary.*;
 
+import java.util.Map;
+
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Service
 public class TaskFactory {
 
-    public StartTask newStartTask(Start start) {
+    public StartTask newStartTask(Start start, Map<String, DataType> parametersTypes) {
         StartTask startTask = new StartTask(start.getCode());
+        DataType currType;
         for (StartParameter parameter : start.getStartParameters()) {
+            currType = parametersTypes.get(parameter.getName());
+            if (isNull(currType)) throw new RuntimeException("No type definition for init parameter " + parameter.getName());
             startTask.addInitParameter(
                     new InitParameter(
                             isEmpty(parameter.getName()) ? parameter.getInnerName() : parameter.getName(),
                             parameter.getInnerName(),
-                            parameter.getType(),
+                            currType,
                             parameter.getDefaultValue()
                     )
             );
@@ -31,26 +38,30 @@ public class TaskFactory {
         return new FinishTask(finish.getCode());
     }
 
-    public TaskStage newTask(Task taskInfo) {
+    public TaskStage newTask(Task taskInfo, Map<String, DataType> parametersTypes) {
         return switch (taskInfo.getType()) {
-            case "call_with_result" -> newCallWithResultTask(taskInfo);
-            case "call" -> newCallTask(taskInfo);
-            case "gate" -> newGateTask(taskInfo);
+            case "call_with_result" -> newCallWithResultTask(taskInfo, parametersTypes);
+            case "call" -> newCallTask(taskInfo, parametersTypes);
+            case "singleton_gate" -> newSingletonGateTask(taskInfo);
+            case "parallel_gate" -> newParallelGateTask(taskInfo);
             case "timer" -> newTimerTask(taskInfo);
             default -> throw new RuntimeException("Bad task type " + taskInfo.getType());
         };
     }
 
-    private CallWithResultTask newCallWithResultTask(Task taskInfo) {
+    private CallWithResultTask newCallWithResultTask(Task taskInfo, Map<String, DataType> parametersTypes) {
         var callWithResultTask = new CallWithResultTask(
                 taskInfo.getCode(),
                 taskInfo.getEndpoint().getValue()
         );
+        DataType currType;
         for (Parameter inputParameter : taskInfo.getInputParameters()) {
+            currType = parametersTypes.get(inputParameter.getInnerName());
+            if (isNull(currType)) throw new RuntimeException("No type definition for init parameter " + inputParameter.getInnerName());
             callWithResultTask.addInputParameter(new InputParameter(
                     inputParameter.getName(),
                     inputParameter.getInnerName(),
-                    inputParameter.getType(),
+                    currType,
                     inputParameter.getDefaultValue()
             ));
         }
@@ -58,22 +69,27 @@ public class TaskFactory {
         for (Parameter outputParameter : taskInfo.getOutputParameters()) {
             if (nonNull(outputParameter.getDefaultValue()))
                 throw new RuntimeException("No default value allowed for output parameter");
+            currType = parametersTypes.get(outputParameter.getInnerName());
+            if (isNull(currType)) throw new RuntimeException("No type definition for init parameter " + outputParameter.getInnerName());
             callWithResultTask.addOutputParameter(new OutputParameter(
                     outputParameter.getName(),
                     outputParameter.getInnerName(),
-                    outputParameter.getType()
+                    currType
             ));
         }
         return callWithResultTask;
     }
 
-    private CallTask newCallTask(Task taskInfo) {
+    private CallTask newCallTask(Task taskInfo, Map<String, DataType> parametersTypes) {
         var callTask = new CallTask(taskInfo.getCode(), taskInfo.getEndpoint().getValue());
+        DataType currType;
         for (Parameter inputParameter : taskInfo.getInputParameters()) {
+            currType = parametersTypes.get(inputParameter.getInnerName());
+            if (isNull(currType)) throw new RuntimeException("No type definition for init parameter " + inputParameter.getInnerName());
             callTask.addInputParameter(new InputParameter(
                     inputParameter.getName(),
                     inputParameter.getInnerName(),
-                    inputParameter.getType(),
+                    currType,
                     inputParameter.getDefaultValue()
             ));
         }
@@ -82,8 +98,12 @@ public class TaskFactory {
         return callTask;
     }
 
-    private GateTask newGateTask(Task taskInfo) {
-        return new GateTask(taskInfo.getCode());
+    private GateTask newParallelGateTask(Task taskInfo) {
+        return new GateTask(GateType.PARALLEL, taskInfo.getCode());
+    }
+
+    private GateTask newSingletonGateTask(Task taskInfo) {
+        return new GateTask(GateType.SINGLETON, taskInfo.getCode());
     }
 
     private TimerTask newTimerTask(Task taskInfo) {

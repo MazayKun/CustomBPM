@@ -6,6 +6,7 @@ import ru.mikheev.kirill.custombpm.service.TaskExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class CallWithResultTask extends TaskStage {
 
@@ -19,8 +20,8 @@ public class CallWithResultTask extends TaskStage {
     }
 
     @Override
-    public void execute(TaskExecutor taskExecutor) {
-        taskExecutor.executeCallWithResultTask(this);
+    public void execute(UUID processId, String branchCode, TaskExecutor taskExecutor) {
+        taskExecutor.executeCallWithResultTask(processId, branchCode, this);
     }
 
     public void addInputParameter(InputParameter inputParameter) {

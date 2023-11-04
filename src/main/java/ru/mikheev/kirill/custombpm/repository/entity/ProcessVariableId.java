@@ -2,12 +2,16 @@ package ru.mikheev.kirill.custombpm.repository.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
+@Getter
 @Embeddable
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProcessVariableId implements Serializable {
 
     @Serial

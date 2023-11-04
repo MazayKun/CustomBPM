@@ -5,6 +5,7 @@ import ru.mikheev.kirill.custombpm.service.TaskExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class CallTask extends TaskStage {
 
@@ -16,9 +17,17 @@ public class CallTask extends TaskStage {
         this.endpoint = endpoint;
     }
 
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public List<InputParameter> getInputParameters() {
+        return inputParameters;
+    }
+
     @Override
-    public void execute(TaskExecutor taskExecutor) {
-        taskExecutor.executeCallTask(this);
+    public void execute(UUID processId, String branchCode, TaskExecutor taskExecutor) {
+        taskExecutor.executeCallTask(processId, branchCode, this);
     }
 
     public void addInputParameter(InputParameter inputParameter) {

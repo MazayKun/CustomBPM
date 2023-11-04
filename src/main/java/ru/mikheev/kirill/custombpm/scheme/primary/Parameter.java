@@ -9,7 +9,6 @@ import lombok.Setter;
 public class Parameter {
     private String name;
     private String innerName;
-    private String type;
     @JacksonXmlText
     private String defaultValue;
 }
