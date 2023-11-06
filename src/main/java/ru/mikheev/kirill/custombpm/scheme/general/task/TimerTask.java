@@ -6,11 +6,15 @@ import java.util.UUID;
 
 public class TimerTask extends TaskStage {
 
-    private final long waitingTime;
+    private final long waitingTime; // TODO заменить на cron нотацию
 
     public TimerTask(String code, long waitingTime) {
         super(code);
         this.waitingTime = waitingTime;
+    }
+
+    public long getWaitingTime() {
+        return waitingTime;
     }
 
     @Override

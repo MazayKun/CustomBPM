@@ -37,4 +37,8 @@ public class ProcessVariable {
     public String getName() {
         return id.getName();
     }
+
+    public Object getObjectRepresentation() {
+        return type.valueFromString(value);
+    }
 }

@@ -62,6 +62,6 @@ public class SchemeStorage {
     }
 
     private String constructSchemeName(String fileName) {
-        return fileName.substring(0, fileName.lastIndexOf('.') - 1);
+        return fileName.substring(0, fileName.lastIndexOf('.'));
     }
 }

@@ -2,6 +2,7 @@ package ru.mikheev.kirill.custombpm.scheme.general.task;
 
 import ru.mikheev.kirill.custombpm.scheme.general.InputParameter;
 import ru.mikheev.kirill.custombpm.scheme.general.OutputParameter;
+import ru.mikheev.kirill.custombpm.scheme.general.link.TaskLink;
 import ru.mikheev.kirill.custombpm.service.TaskExecutor;
 
 import java.util.ArrayList;
@@ -17,6 +18,22 @@ public class CallWithResultTask extends TaskStage {
     public CallWithResultTask(String code, String endpoint) {
         super(code);
         this.endpoint = endpoint;
+    }
+
+    public TaskLink getNextTaskLink() {
+        return nextTaskLink;
+    }
+
+    public List<InputParameter> getInputParameters() {
+        return inputParameters;
+    }
+
+    public List<OutputParameter> getOutputParameters() {
+        return outputParameters;
+    }
+
+    public String getEndpoint() {
+        return endpoint;
     }
 
     @Override

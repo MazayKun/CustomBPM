@@ -22,6 +22,18 @@ public class GateTask extends TaskStage {
         this.type = type;
     }
 
+    public GateType getType() {
+        return type;
+    }
+
+    public TaskLink getDefaultLink() {
+        return defaultLink;
+    }
+
+    public List<TaskLink> getOutgoingLinks() {
+        return outgoingLinks;
+    }
+
     @Override
     public void addLink(TaskLink link) {
         if (link.getTransitionType() == TransitionType.DEFAULT) {

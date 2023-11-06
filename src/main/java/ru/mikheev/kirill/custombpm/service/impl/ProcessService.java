@@ -1,17 +1,18 @@
 package ru.mikheev.kirill.custombpm.service.impl;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.mikheev.kirill.custombpm.common.DataType;
-import ru.mikheev.kirill.custombpm.repository.BranchErrorsRepository;
+import ru.mikheev.kirill.custombpm.repository.BranchExceptionsRepository;
 import ru.mikheev.kirill.custombpm.repository.ExecutionBranchesRepository;
 import ru.mikheev.kirill.custombpm.repository.ProcessVariablesRepository;
 import ru.mikheev.kirill.custombpm.repository.ProcessesRepository;
-import ru.mikheev.kirill.custombpm.repository.entity.ExecutionBranch;
 import ru.mikheev.kirill.custombpm.repository.entity.Process;
-import ru.mikheev.kirill.custombpm.repository.entity.ProcessVariable;
+import ru.mikheev.kirill.custombpm.repository.entity.*;
 import ru.mikheev.kirill.custombpm.scheme.general.InitParameter;
 import ru.mikheev.kirill.custombpm.scheme.general.Scheme;
 import ru.mikheev.kirill.custombpm.service.dto.StartProcessDto;
@@ -27,12 +28,17 @@ import static java.util.Objects.isNull;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ProcessService {
+public class ProcessService { // TODO : Объединить с ProcessLifecycleServiceImpl
 
     private final ProcessesRepository processesRepository;
     private final ProcessVariablesRepository processVariablesRepository;
     private final ExecutionBranchesRepository executionBranchesRepository;
-    private final BranchErrorsRepository branchErrorsRepository;
+    private final BranchExceptionsRepository branchExceptionsRepository;
+
+    //{
+    //    "condition" : true,
+    //    "test_value" : 123
+    //}
 
     @Transactional
     public StartProcessDto initNewProcess(Scheme scheme, Map<String, String> parameters) {
@@ -65,18 +71,18 @@ public class ProcessService {
         );
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void interruptBranchExecutionWithError(UUID processId, String branchCode, Throwable cause) {
-        //executionBranchesRepository.findByCodeAndProcessId(branchCode, processId);
+        ExecutionBranch executionBranch = executionBranchesRepository.findByCodeAndProcessId(branchCode, processId)
+                .orElseThrow(() -> new RuntimeException(String.format("Branch %s for process %s not found", branchCode, processId)));
+        executionBranch.setStatus(BranchStatus.ERROR);
+        executionBranchesRepository.save(executionBranch);
+        branchExceptionsRepository.save(new BranchException(executionBranch.getId(), cause.getMessage(), ExceptionUtils.getStackTrace(cause)));
     }
 
     private Map<String, Object> mapVariablesToCorrespondingType(List<ProcessVariable> variables) {
         return variables.stream()
-                .collect(Collectors.toMap(ProcessVariable::getName, this::convertRawVariableToObject)); // TODO: Корректно обрабатывать ошибку
-    }
-
-    private Object convertRawVariableToObject(ProcessVariable processVariable) {
-        return processVariable.getType().valueFromString(processVariable.getValue());
+                .collect(Collectors.toMap(ProcessVariable::getName, ProcessVariable::getObjectRepresentation)); // TODO: Корректно обрабатывать ошибку
     }
 
     private void validateParameterStringRepresentation(DataType type, String parameterRepresentation) {

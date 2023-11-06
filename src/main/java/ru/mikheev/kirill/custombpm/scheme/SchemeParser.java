@@ -8,7 +8,7 @@ import ru.mikheev.kirill.custombpm.scheme.condition.operation.PredicateOperation
 import ru.mikheev.kirill.custombpm.scheme.general.Scheme;
 import ru.mikheev.kirill.custombpm.scheme.general.link.TaskLink;
 import ru.mikheev.kirill.custombpm.scheme.general.task.*;
-import ru.mikheev.kirill.custombpm.scheme.primary.*;
+import ru.mikheev.kirill.custombpm.scheme.raw.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -101,14 +101,16 @@ public class SchemeParser {
     private void enrichTasksWithIncomingLinks(List<TaskStage> taskStages, Map<String, Integer> incomingLinksCounterMap) {
         for (TaskStage taskStage : taskStages) {
             int incomingLinksCounter = incomingLinksCounterMap.getOrDefault(taskStage.getCode(), 0);
-            if (taskStage instanceof StartTask && incomingLinksCounter != 0) {
-                throw new RuntimeException("There must be 0 incoming links for start task " + taskStage.getCode());
+            if (taskStage instanceof StartTask ) {
+                if (incomingLinksCounter != 0) throw new RuntimeException("There must be 0 incoming links for start task " + taskStage.getCode());
+                continue;
             }
             if (incomingLinksCounter == 0) {
                 throw new RuntimeException("The number of incoming links cannot be 0 for task " + taskStage.getCode());
             }
             if (taskStage instanceof GateTask gt) {
                 gt.setIncomingLinksCounter(incomingLinksCounter);
+                continue;
             }
             if (incomingLinksCounter != 1) {
                 throw new RuntimeException(String.format("There must be 1 incoming links for task %s but %d found", taskStage.getCode(), incomingLinksCounter));

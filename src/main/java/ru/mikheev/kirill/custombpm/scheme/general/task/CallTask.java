@@ -1,6 +1,7 @@
 package ru.mikheev.kirill.custombpm.scheme.general.task;
 
 import ru.mikheev.kirill.custombpm.scheme.general.InputParameter;
+import ru.mikheev.kirill.custombpm.scheme.general.link.TaskLink;
 import ru.mikheev.kirill.custombpm.service.TaskExecutor;
 
 import java.util.ArrayList;
@@ -23,6 +24,10 @@ public class CallTask extends TaskStage {
 
     public List<InputParameter> getInputParameters() {
         return inputParameters;
+    }
+
+    public TaskLink getNextTaskLink() {
+        return nextTaskLink;
     }
 
     @Override

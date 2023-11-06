@@ -10,7 +10,7 @@
     </start>
     <tasks>
         <task description="Запрос данных" code="data_request" type="call_with_result">
-            <endpoint>${CALL_WITH_RESULT_SERVICE}/call</endpoint>
+            <endpoint>endpoint_to_call</endpoint>
             <input>
                 <parameter name="user_id" innerName="user_id"/>
             </input>
@@ -21,7 +21,7 @@
         </task>
         <task description="Проверка данных" code="check" type="singleton_gate"/>
         <task description="Отправка" code="sending" type="call">
-            <endpoint>${CALL_SERVICE}/call</endpoint>
+            <endpoint>endpoint_to_call</endpoint>
             <input>
                 <parameter name="user_id" innerName="user_id"/>
             </input>
@@ -44,7 +44,7 @@
         <link code="check_sending_link">
             <from>check</from>
             <to>sending</to>
-            <condition type="expression">${condition} &amp; ${test_value == 0}</condition>
+            <condition type="expression">condition == 'true' &amp;&amp; test_value == 0</condition>
         </link>
         <link code="sending_extended_result_link">
             <from>sending</from>

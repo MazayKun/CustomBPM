@@ -1,4 +1,4 @@
-package ru.mikheev.kirill.custombpm.scheme.primary;
+package ru.mikheev.kirill.custombpm.scheme.raw;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;
 import lombok.Getter;
@@ -6,8 +6,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class Condition {
-    private String type;
+public class Endpoint {
     @JacksonXmlText
-    private String conditionExpression;
+    private String value;
 }

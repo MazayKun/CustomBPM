@@ -5,7 +5,7 @@ import ru.mikheev.kirill.custombpm.common.DataType;
 import ru.mikheev.kirill.custombpm.scheme.general.InitParameter;
 import ru.mikheev.kirill.custombpm.scheme.general.InputParameter;
 import ru.mikheev.kirill.custombpm.scheme.general.OutputParameter;
-import ru.mikheev.kirill.custombpm.scheme.primary.*;
+import ru.mikheev.kirill.custombpm.scheme.raw.*;
 
 import java.util.Map;
 
@@ -20,7 +20,7 @@ public class TaskFactory {
         StartTask startTask = new StartTask(start.getCode());
         DataType currType;
         for (StartParameter parameter : start.getStartParameters()) {
-            currType = parametersTypes.get(parameter.getName());
+            currType = parametersTypes.get(parameter.getInnerName());
             if (isNull(currType)) throw new RuntimeException("No type definition for init parameter " + parameter.getName());
             startTask.addInitParameter(
                     new InitParameter(
