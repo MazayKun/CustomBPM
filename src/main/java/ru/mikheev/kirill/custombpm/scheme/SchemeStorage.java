@@ -27,10 +27,10 @@ public class SchemeStorage {
     @PostConstruct
     private void initUploadedSchemes() {
         File schemesDir = new File(schemesVolume);
-        if (!schemesDir.isDirectory()) {
-            throw new RuntimeException(schemesVolume + " must be a directory");
-        }
         if (schemesDir.exists()) {
+            if (!schemesDir.isDirectory()) {
+                throw new RuntimeException(schemesVolume + " must be a directory");
+            }
             String schemeName;
             for (var schemeFile : schemesDir.listFiles()) {
                 schemeName = constructSchemeName(schemeFile.getName());

@@ -15,7 +15,7 @@ public class RequestValidator {
             throw new RuntimeException("Empty file name");
         }
         String fileExtension = file.getOriginalFilename().substring(
-                file.getOriginalFilename().lastIndexOf('.')
+                file.getOriginalFilename().lastIndexOf('.') + 1
         );
         if (!SCHEME_EXTENSION.equalsIgnoreCase(fileExtension)) {
             throw new RuntimeException("Bad extension for scheme file " + fileExtension);
