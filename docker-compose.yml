@@ -1,12 +1,27 @@
 version: "3"
 
 services:
-  test-db:
+  custom-bpm:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./schemes:/schemes"
+    depends_on:
+      - db
+    networks:
+      - bpm-net
+  db:
     image: postgres:latest
-
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_USER=bpm
       - POSTGRES_PASSWORD=bpm
       - POSTGRES_DB=bpm
+    networks:
+      - bpm-net
+networks:
+  bpm-net:
+    driver: bridge
+    external: true

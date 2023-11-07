@@ -5,7 +5,7 @@ spring:
     name: custom-bpm
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/bpm
+    url: jdbc:postgresql://db/bpm
     username: bpm
     password: bpm
   jpa:
